@@ -78,17 +78,6 @@ resource "azurerm_subnet" "snet" {
 }
 
 
-module "vnet_diagnostics" {
-  source   = "../../services/logmon/diagnostics"
-  for_each = azurerm_virtual_network.vnet
-
-  resource_id = each.value.id
-  diagnostics = local.combined_diagnostics
-  profiles    = local.networking.vnets[each.key].diagnostic_profiles
-  # resource_location = each.value.location
-}
-
-
 resource "azurerm_subnet" "ssnet" {
   for_each = try(local.networking.specialsubnets, {})
 
@@ -178,7 +167,6 @@ module "diagnostic_log_analytics_diagnostics" {
   resource_id = module.diagnostic_log_analytics[each.key].id
   diagnostics = local.combined_diagnostics
   profiles    = try(each.value.diagnostic_profiles, {})
-  # resource_location = module.diagnostic_log_analytics[each.key].location
 }
 
 
@@ -193,4 +181,13 @@ module "subscription_diagnostics" {
       destination_key  = "central_logs"
     }
   }
+}
+
+module "vnet_diagnostics" {
+  source   = "../../services/logmon/diagnostics"
+  for_each = azurerm_virtual_network.vnet
+
+  resource_id = each.value.id
+  diagnostics = local.combined_diagnostics
+  profiles    = local.networking.vnets[each.key].diagnostic_profiles
 }

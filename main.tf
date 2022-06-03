@@ -121,3 +121,8 @@ module "shared_synapse" {
   combined_objects_core = local.combined_objects_core
   tags                  = local.global_settings.tags
 }
+
+
+# output "gen2fs" {
+#   value = module.datalake_services.gen2_filesystems
+# }

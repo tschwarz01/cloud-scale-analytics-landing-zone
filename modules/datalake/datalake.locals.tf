@@ -43,11 +43,11 @@ locals {
     }
     enriched = {
       name        = "standardized"
-      storage_key = "raw"
+      storage_key = "curated"
     }
     curated = {
       name        = "dataproducts"
-      storage_key = "raw"
+      storage_key = "curated"
     }
   }
 
