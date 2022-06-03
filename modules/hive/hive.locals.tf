@@ -8,8 +8,9 @@ locals {
       enable_rbac_authorization = true
       soft_delete_enabled       = true
       purge_protection_enabled  = false
+
       diagnostic_profiles = {
-        databricks-mon = {
+        hivekv = {
           definition_key   = "azure_key_vault"
           destination_type = "log_analytics"
           destination_key  = "central_logs"
