@@ -123,6 +123,6 @@ module "shared_synapse" {
 }
 
 
-# output "gen2fs" {
-#   value = module.datalake_services.gen2_filesystems
-# }
+output "combined_objects_core" {
+  value = local.combined_objects_core
+}
