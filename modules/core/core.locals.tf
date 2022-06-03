@@ -40,6 +40,10 @@ locals {
       name     = "shared-synapse"
       location = var.global_settings.location
     }
+    data_product01 = {
+      name     = "data-product-analytics01"
+      location = var.global_settings.location
+    }
   }
   networking = {
     vnets = {
