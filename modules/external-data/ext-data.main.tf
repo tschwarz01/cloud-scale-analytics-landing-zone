@@ -35,3 +35,35 @@ module "private_endpoints" {
   private_dns_zones          = var.combined_objects_core.private_dns_zones
   tags                       = var.global_settings.tags
 }
+
+
+module "storage_diagnostics" {
+  source   = "../../services/logmon/diagnostics"
+  for_each = azurerm_storage_account.stg
+
+  resource_id = each.value.id
+  diagnostics = var.combined_objects_core.diagnostics
+  profiles = {
+    storage_account = {
+      definition_key   = "storage_account"
+      destination_type = "log_analytics"
+      destination_key  = "central_logs"
+    }
+  }
+}
+
+
+module "blob_diagnostics" {
+  source   = "../../services/logmon/diagnostics"
+  for_each = azurerm_storage_account.stg
+
+  resource_id = "${each.value.id}/blobServices/default"
+  diagnostics = var.combined_objects_core.diagnostics
+  profiles = {
+    blob_services = {
+      definition_key   = "blob_services"
+      destination_type = "log_analytics"
+      destination_key  = "central_logs"
+    }
+  }
+}

@@ -397,5 +397,34 @@ locals {
         ]
       }
     }
+    storage_account = {
+      name = "operational_logs_and_metrics"
+      categories = {
+        log = [
+          # ["Category name",  "Diagnostics Enabled(true/false)", "Retention Enabled(true/false)", Retention_period]
+        ]
+        metric = [
+          #["Category name",  "Diagnostics Enabled(true/false)", "Retention Enabled(true/false)", Retention_period]
+          ["Capacity", true, false, 7],
+          ["Transaction", true, false, 7],
+        ]
+      }
+    }
+    blob_services = {
+      name = "operational_logs_and_metrics"
+      categories = {
+        log = [
+          # ["Category name",  "Diagnostics Enabled(true/false)", "Retention Enabled(true/false)", Retention_period]
+          ["StorageRead", true, false, 7],
+          ["StorageWrite", true, false, 7],
+          ["StorageDelete", true, true, 7],
+        ]
+        metric = [
+          #["Category name",  "Diagnostics Enabled(true/false)", "Retention Enabled(true/false)", Retention_period]
+          ["Capacity", true, false, 7],
+          ["Transaction", true, false, 7],
+        ]
+      }
+    }
   }
 }

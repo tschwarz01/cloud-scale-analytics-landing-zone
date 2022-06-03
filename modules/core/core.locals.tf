@@ -51,7 +51,7 @@ locals {
           address_space = [var.module_settings.vnet_address_cidr]
         }
         diagnostic_profiles = {
-          operation = {
+          vnets = {
             definition_key   = "networking_all"
             destination_type = "log_analytics"
             destination_key  = "central_logs"
