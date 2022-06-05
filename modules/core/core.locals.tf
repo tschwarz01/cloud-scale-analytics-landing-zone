@@ -107,6 +107,12 @@ locals {
           ]
         }
       }
+      aml_training = {
+        name     = "aml-training"
+        cidr     = [var.module_settings.aml_training_subnet_cidr]
+        vnet_key = "vnet"
+        nsg_key  = "aml_nsg"
+      }
     }
 
 
@@ -132,6 +138,37 @@ locals {
         location           = var.global_settings.location
         name               = "databricks-pri-nsg"
         nsg                = []
+      }
+
+      aml_nsg = {
+        version            = 1
+        resource_group_key = "network"
+        location           = var.global_settings.location
+        name               = "aml-training-nsg"
+        nsg = [
+          {
+            name                       = "aml_allow_44224",
+            priority                   = "100"
+            direction                  = "Inbound"
+            access                     = "Allow"
+            protocol                   = "Tcp"
+            source_port_range          = "*"
+            destination_port_range     = "44224"
+            source_address_prefix      = "AzureMachineLearning"
+            destination_address_prefix = "*"
+          },
+          {
+            name                       = "aml_allow_29876_29877",
+            priority                   = "110"
+            direction                  = "Inbound"
+            access                     = "Allow"
+            protocol                   = "Tcp"
+            source_port_range          = "*"
+            destination_port_range     = "29876-29877"
+            source_address_prefix      = "BatchNodeManagement"
+            destination_address_prefix = "*"
+          }
+        ]
       }
     }
     vnet_peerings = {

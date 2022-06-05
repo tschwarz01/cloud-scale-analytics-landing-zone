@@ -16,6 +16,7 @@ services_subnet_cidr                    = "10.111.0.0/24"
 private_endpoint_subnet_cidr            = "10.111.1.0/24"
 shared_databricks_pub_subnet_cidr       = "10.111.2.0/25"
 shared_databricks_pri_subnet_cidr       = "10.111.2.128/25"
+aml_training_subnet_cidr                = "10.111.3.0/24"
 connectivity_hub_virtual_network_id     = "/subscriptions/893395a4-65a3-4525-99ea-2378c6e0dbed/resourceGroups/rg-network_connectivity_hub/providers/Microsoft.Network/virtualNetworks/vnet-connectivity_hub"
 data_management_zone_virtual_network_id = "/subscriptions/47f7e6d7-0e52-4394-92cb-5f106bbc647f/resourceGroups/tpaa-dev-network/providers/Microsoft.Network/virtualNetworks/tpaa-dev-caf-csa-mz-vnet"
 

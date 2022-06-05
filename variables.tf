@@ -33,34 +33,39 @@ variable "data_management_zone_virtual_network_id" {
 }
 
 variable "vnet_address_cidr" {
-  description = "Address space to use for the Management Zone VNet"
+  description = "Address space to use for the Data Landing Zone VNet"
   type        = string
 }
 
 variable "services_subnet_cidr" {
   type        = string
-  description = "Address space to use for the Shared Services subnet within the Management Zone VNet"
+  description = "Address space to use for the Shared Services subnet within the Data Landing Zone VNet"
 }
 
 variable "private_endpoint_subnet_cidr" {
   type        = string
-  description = "Address space to use for the Private Endpoint subnet within the Management Zone VNet"
+  description = "Address space to use for the Private Endpoint subnet within the Data Landing Zone VNet"
 }
 
 variable "shared_databricks_pub_subnet_cidr" {
   type        = string
-  description = "Address space to use for the Power BI / Power Platform vnet data gateway subnet within the Management Zone VNet"
+  description = "Address space to use for the Power BI / Power Platform vnet data gateway subnet within the Data Landing Zone VNet"
 }
 
 variable "shared_databricks_pri_subnet_cidr" {
   type        = string
-  description = "Address space to use for the Virtual Network Gateway subnet within the Management Zone VNet"
+  description = "Address space to use for the Virtual Network Gateway subnet within the Data Landing Zone VNet"
 }
 
 variable "private_dns_zones_subscription_id" {
   type        = string
   description = "The id of the subscription where remote Private DNS Zones are deployed."
   default     = null
+}
+
+variable "aml_training_subnet_cidr" {
+  type        = string
+  description = "Address space to use for the Azure Machine Learning training subnet."
 }
 
 variable "private_dns_zones_resource_group_name" {
@@ -77,7 +82,7 @@ variable "remote_private_dns_zones" {
     resource_group_name               = string
     private_dns_zones                 = list(string)
   }))
-  description = "List of Private DNS Zone names from the remote subscription that will be linked to the Data Management Zone"
+  description = "List of Private DNS Zone names from the remote subscription that will be linked to the Data Landing Zone"
   default     = {}
 }
 
