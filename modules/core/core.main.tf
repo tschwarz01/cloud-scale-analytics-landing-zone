@@ -114,6 +114,40 @@ resource "azurerm_subnet_network_security_group_association" "nsg_assoc" {
   network_security_group_id = azurerm_network_security_group.nsg[each.value.nsg_key].id
 }
 
+resource "azurerm_route_table" "rt-training" {
+  name                = "rt-training"
+  location            = var.global_settings.location
+  resource_group_name = azurerm_resource_group.rg["network"].name
+}
+
+resource "azurerm_route" "training-Internet-Route" {
+  name                = "Internet"
+  resource_group_name = azurerm_resource_group.rg["network"].name
+  route_table_name    = azurerm_route_table.rt-training.name
+  address_prefix      = "0.0.0.0/0"
+  next_hop_type       = "Internet"
+}
+
+resource "azurerm_route" "training-AzureMLRoute" {
+  name                = "AzureMLRoute"
+  resource_group_name = azurerm_resource_group.rg["network"].name
+  route_table_name    = azurerm_route_table.rt-training.name
+  address_prefix      = "AzureMachineLearning"
+  next_hop_type       = "Internet"
+}
+
+resource "azurerm_route" "training-BatchRoute" {
+  name                = "BatchRoute"
+  resource_group_name = azurerm_resource_group.rg["network"].name
+  route_table_name    = azurerm_route_table.rt-training.name
+  address_prefix      = "BatchNodeManagement"
+  next_hop_type       = "Internet"
+}
+
+resource "azurerm_subnet_route_table_association" "rt-training-link" {
+  subnet_id      = local.subnets["aml_training"].id
+  route_table_id = azurerm_route_table.rt-training.id
+}
 
 module "remote_vnet_links" {
   for_each = local.ddi.remote_private_dns_zones

@@ -29,6 +29,10 @@ locals {
       name        = "sharedsynapse"
       storage_key = "workspace"
     }
+    dp01_filesystem = {
+      name        = "synapsedp01fs"
+      storage_key = "workspace"
+    }
     sandbox_filesystem = {
       name        = "sandbox"
       storage_key = "workspace"

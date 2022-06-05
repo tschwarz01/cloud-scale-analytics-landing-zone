@@ -44,6 +44,7 @@ locals {
     private_dns_zones_subscription_id           = try(var.private_dns_zones_subscription_id, null)
     private_dns_zones_resource_group_name       = try(var.private_dns_zones_resource_group_name, null)
     remote_private_dns_zones                    = try(var.remote_private_dns_zones, null)
+    aml_training_subnet_cidr                    = try(var.aml_training_subnet_cidr, null)
   }
 
   dbmon_module_settings = {}
