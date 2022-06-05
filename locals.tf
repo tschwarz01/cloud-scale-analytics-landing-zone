@@ -75,7 +75,7 @@ locals {
   }
 
   synapse_module_settings = {
-    synapse_gen2_filesystem_id   = module.datalake_services.gen2_filesystems["shared_synaspe_filesystem"].id
+    synapse_gen2_filesystem_id   = module.datalake_services.gen2_filesystems["shared_synaspe"].id
     synapse_sql_pool_sku         = var.synapse_sql_pool_sku
     synapse_spark_node_size      = var.synapse_spark_node_size
     synapse_spark_min_node_count = var.synapse_spark_min_node_count
