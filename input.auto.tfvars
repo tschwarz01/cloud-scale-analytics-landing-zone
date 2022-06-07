@@ -11,14 +11,18 @@ tags = {
 #########################################
 ##        Core Network Settings
 #########################################
-vnet_address_cidr                       = "10.111.0.0/21"
-services_subnet_cidr                    = "10.111.0.0/24"
-private_endpoint_subnet_cidr            = "10.111.1.0/24"
-shared_databricks_pub_subnet_cidr       = "10.111.2.0/25"
-shared_databricks_pri_subnet_cidr       = "10.111.2.128/25"
-aml_training_subnet_cidr                = "10.111.3.0/24"
-connectivity_hub_virtual_network_id     = "/subscriptions/893395a4-65a3-4525-99ea-2378c6e0dbed/resourceGroups/rg-network_connectivity_hub/providers/Microsoft.Network/virtualNetworks/vnet-connectivity_hub"
-data_management_zone_virtual_network_id = "/subscriptions/47f7e6d7-0e52-4394-92cb-5f106bbc647f/resourceGroups/tpaa-dev-network/providers/Microsoft.Network/virtualNetworks/tpaa-dev-caf-csa-mz-vnet"
+vnet_address_cidr                 = "10.111.0.0/21"
+services_subnet_cidr              = "10.111.0.0/24"
+private_endpoint_subnet_cidr      = "10.111.1.0/24"
+shared_databricks_pub_subnet_cidr = "10.111.2.0/25"
+shared_databricks_pri_subnet_cidr = "10.111.2.128/25"
+aml_training_subnet_cidr          = "10.111.3.0/24"
+
+# Leave null if using remote state data source
+connectivity_hub_virtual_network_id = null
+
+# Leave null if using remote state data source
+data_management_zone_virtual_network_id = null
 
 
 #########################################
@@ -65,10 +69,12 @@ remote_private_dns_zones = {
 use_existing_shared_runtime_compute = true
 
 # Resource id of the Data Factory hosted in the external (management zone) subscription.
-remote_data_factory_resource_id = "/subscriptions/47f7e6d7-0e52-4394-92cb-5f106bbc647f/resourceGroups/tpaa-dev-integration/providers/Microsoft.DataFactory/factories/tpaa-dev-adf-integration21tws"
+# Leave null if using remote state data source
+remote_data_factory_resource_id = null
 
 # Resource id of the external self-hosted integration runtime with existing compute resources.
-remote_data_factory_self_hosted_runtime_resource_id = "/subscriptions/47f7e6d7-0e52-4394-92cb-5f106bbc647f/resourcegroups/tpaa-dev-integration/providers/Microsoft.DataFactory/factories/tpaa-dev-adf-integration21tws/integrationruntimes/tpaa-dev-adfsharedshir21"
+# Leave null if using remote state data source
+remote_data_factory_self_hosted_runtime_resource_id = null
 
 
 create_shared_runtime_compute_in_landing_zone         = false
@@ -80,8 +86,12 @@ vmss_instance_count                                   = 2
 #########################################
 ##      Diagnostics Settings
 #########################################
-remote_log_analytics_workspace_resource_id  = "/subscriptions/47f7e6d7-0e52-4394-92cb-5f106bbc647f/resourceGroups/tpaa-dev-logging-and-monitoring/providers/Microsoft.OperationalInsights/workspaces/tpaa-dev-logs"
-remote_log_analytics_workspace_workspace_id = "f83cc9b8-e3d7-4af4-b3da-b5b3290f2bf9"
+
+# Leave null if using remote state data source
+remote_log_analytics_workspace_resource_id = null
+
+# Leave null if using remote state data source
+remote_log_analytics_workspace_workspace_id = null
 
 
 #########################################

@@ -172,58 +172,58 @@ locals {
       }
     }
     vnet_peerings = {
-      lz_to_hub = {
-        name = "dlz_to_connectivity_hub"
-        from = {
-          vnet_key = "vnet"
-        }
-        to = {
-          remote_virtual_network_id = var.module_settings.connectivity_hub_virtual_network_id
-        }
-        allow_virtual_network_access = true
-        allow_forwarded_traffic      = true
-        allow_gateway_transit        = false
-        use_remote_gateways          = true
-      }
-      hub_to_lz = {
-        name = "region1_connectivity_hub_to_dlz"
-        from = {
-          id = var.module_settings.connectivity_hub_virtual_network_id
-        }
-        to = {
-          vnet_key = "vnet"
-        }
-        allow_virtual_network_access = true
-        allow_forwarded_traffic      = true
-        allow_gateway_transit        = true
-        use_remote_gateways          = false
-      }
-      lz_to_dmlz = {
-        name = "dlz_to_dmlz"
-        from = {
-          vnet_key = "vnet"
-        }
-        to = {
-          remote_virtual_network_id = var.module_settings.data_management_zone_virtual_network_id
-        }
-        allow_virtual_network_access = true
-        allow_forwarded_traffic      = true
-        allow_gateway_transit        = false
-        use_remote_gateways          = false
-      }
-      dmlz_to_lz = {
-        name = "dmlz_to_dlz"
-        from = {
-          id = var.module_settings.data_management_zone_virtual_network_id
-        }
-        to = {
-          vnet_key = "vnet"
-        }
-        allow_virtual_network_access = true
-        allow_forwarded_traffic      = true
-        allow_gateway_transit        = false
-        use_remote_gateways          = false
-      }
+      # lz_to_hub = {
+      #   name = "dlz_to_connectivity_hub"
+      #   from = {
+      #     vnet_key = "vnet"
+      #   }
+      #   to = {
+      #     remote_virtual_network_id = var.module_settings.connectivity_hub_virtual_network_id
+      #   }
+      #   allow_virtual_network_access = true
+      #   allow_forwarded_traffic      = true
+      #   allow_gateway_transit        = false
+      #   use_remote_gateways          = true
+      # }
+      # hub_to_lz = {
+      #   name = "region1_connectivity_hub_to_dlz"
+      #   from = {
+      #     id = var.module_settings.connectivity_hub_virtual_network_id
+      #   }
+      #   to = {
+      #     vnet_key = "vnet"
+      #   }
+      #   allow_virtual_network_access = true
+      #   allow_forwarded_traffic      = true
+      #   allow_gateway_transit        = true
+      #   use_remote_gateways          = false
+      # }
+      # lz_to_dmlz = {
+      #   name = "dlz_to_dmlz"
+      #   from = {
+      #     vnet_key = "vnet"
+      #   }
+      #   to = {
+      #     remote_virtual_network_id = var.module_settings.data_management_zone_virtual_network_id
+      #   }
+      #   allow_virtual_network_access = true
+      #   allow_forwarded_traffic      = true
+      #   allow_gateway_transit        = false
+      #   use_remote_gateways          = false
+      # }
+      # dmlz_to_lz = {
+      #   name = "dmlz_to_dlz"
+      #   from = {
+      #     id = var.module_settings.data_management_zone_virtual_network_id
+      #   }
+      #   to = {
+      #     vnet_key = "vnet"
+      #   }
+      #   allow_virtual_network_access = true
+      #   allow_forwarded_traffic      = true
+      #   allow_gateway_transit        = false
+      #   use_remote_gateways          = false
+      # }
     }
   }
   ddi = {
