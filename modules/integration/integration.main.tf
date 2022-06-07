@@ -13,21 +13,6 @@ module "keyvault" {
 }
 
 
-resource "azurerm_role_assignment" "role_assignment" {
-  depends_on = [module.keyvault]
-  for_each = {
-    for key, value in local.role_assignments : key => value
-    if var.module_settings.create_shared_runtime_compute_in_landing_zone == true
-  }
-
-  scope                = each.value.scope
-  role_definition_name = each.value.role_definition_name
-  principal_id         = each.value.principal_id
-}
-
-
-
-
 module "data_factory" {
   source   = "../../services/general/data_factory/data_factory"
   for_each = local.data_factory
@@ -42,7 +27,7 @@ module "data_factory" {
 }
 
 module "remote_self_hosted_runtimes" {
-  depends_on = [azurerm_role_assignment.shared_factory_assignment]
+  depends_on = [azurerm_role_assignment.remote_shared_factory_assignment]
   source     = "../../services/general/data_factory/integration_runtime_self_hosted"
   for_each = {
     for key, value in local.data_factory_integration_runtimes_self_hosted : key => value
@@ -57,8 +42,7 @@ module "remote_self_hosted_runtimes" {
 }
 
 module "local_self_hosted_runtimes" {
-  depends_on = [azurerm_role_assignment.shared_factory_assignment]
-  source     = "../../services/general/data_factory/integration_runtime_self_hosted"
+  source = "../../services/general/data_factory/integration_runtime_self_hosted"
   for_each = {
     for key, value in local.data_factory_integration_runtimes_self_hosted : key => value
     if value.is_remote == false && var.module_settings.create_shared_runtime_compute_in_landing_zone == true
@@ -71,10 +55,10 @@ module "local_self_hosted_runtimes" {
   settings        = each.value
 }
 
-resource "azurerm_role_assignment" "shared_factory_assignment" {
+resource "azurerm_role_assignment" "remote_shared_factory_assignment" {
   for_each = {
     for key, value in local.data_factory_integration_runtimes_self_hosted : key => value
-    if value.is_remote == true
+    if value.is_remote == true && var.module_settings.use_existing_shared_runtime_compute == true
   }
 
   scope                = each.value.remote_data_factory_resource_id
@@ -82,9 +66,23 @@ resource "azurerm_role_assignment" "shared_factory_assignment" {
   principal_id         = module.data_factory[each.value.data_factory_key].identity[0].principal_id
 }
 
+
+resource "azurerm_role_assignment" "role_assignment" {
+  depends_on = [module.keyvault]
+  for_each = {
+    for key, value in local.role_assignments : key => value
+    if var.module_settings.create_shared_runtime_compute_in_landing_zone == true
+  }
+
+  scope                = each.value.scope
+  role_definition_name = each.value.role_definition_name
+  principal_id         = each.value.principal_id
+}
+
+
 resource "time_sleep" "shirdelay" {
   depends_on      = [azurerm_role_assignment.role_assignment]
-  create_duration = "25s"
+  create_duration = "15s"
 }
 
 

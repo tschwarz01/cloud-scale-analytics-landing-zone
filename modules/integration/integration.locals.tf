@@ -40,14 +40,6 @@ locals {
     }
   }
 
-  role_assignments = {
-    kvint = {
-      scope                = try(module.keyvault["integration"].id, null)
-      role_definition_name = "Key Vault Secrets Officer"
-      principal_id         = var.global_settings.client_config.object_id
-    }
-  }
-
   data_factory = {
     df_shared = {
       name                            = "lz-adf-shared"
@@ -97,6 +89,14 @@ locals {
           }
         }
       }
+    }
+  }
+
+  role_assignments = {
+    kvint = {
+      scope                = try(module.keyvault["integration"].id, null)
+      role_definition_name = "Key Vault Secrets Officer"
+      principal_id         = var.global_settings.client_config.object_id
     }
   }
 

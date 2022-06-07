@@ -26,10 +26,13 @@ variable "prefix" {
 variable "connectivity_hub_virtual_network_id" {
   description = "Virtual network resource id of the regional hub connectivity virtual network."
   type        = string
+  default     = null
 }
 
 variable "data_management_zone_virtual_network_id" {
   description = "Virtual network resource id of the data management zone's virtual network."
+  type        = string
+  default     = null
 }
 
 variable "vnet_address_cidr" {
@@ -57,15 +60,15 @@ variable "shared_databricks_pri_subnet_cidr" {
   description = "Address space to use for the Virtual Network Gateway subnet within the Data Landing Zone VNet"
 }
 
+variable "aml_training_subnet_cidr" {
+  type        = string
+  description = "Address space to use for the Azure Machine Learning training subnet."
+}
+
 variable "private_dns_zones_subscription_id" {
   type        = string
   description = "The id of the subscription where remote Private DNS Zones are deployed."
   default     = null
-}
-
-variable "aml_training_subnet_cidr" {
-  type        = string
-  description = "Address space to use for the Azure Machine Learning training subnet."
 }
 
 variable "private_dns_zones_resource_group_name" {
@@ -89,17 +92,19 @@ variable "remote_private_dns_zones" {
 variable "use_existing_shared_runtime_compute" {
   type        = bool
   description = "Feature flag determines whether to use existing Self-Hosted Integration Runtime compute resources associated with a remote Data Factory instance."
-  default     = false
+  default     = true
 }
 
 variable "remote_data_factory_resource_id" {
   type        = string
   description = "Resource id of the Data Factory hosted in the external (management zone) subscription."
+  default     = null
 }
 
 variable "remote_data_factory_self_hosted_runtime_resource_id" {
   type        = string
   description = "Resource id of the external self-hosted integration runtime with existing compute resources."
+  default     = null
 }
 
 variable "create_shared_runtime_compute_in_landing_zone" {

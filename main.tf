@@ -26,9 +26,19 @@ provider "azurerm" {
   }
 }
 
+
 data "azurerm_client_config" "default" {}
 data "azuread_client_config" "current" {}
 data "azurerm_subscription" "current" {}
+
+data "terraform_remote_state" "dmlz" {
+  backend = "local"
+
+  config = {
+    path = "../caf-csa-management-zone/terraform.tfstate"
+  }
+}
+
 
 module "core" {
   source = "./modules/core"
@@ -131,3 +141,4 @@ output "datalake_services" {
   value     = module.datalake_services
   sensitive = true
 }
+
