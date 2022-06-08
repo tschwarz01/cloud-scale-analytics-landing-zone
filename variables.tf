@@ -65,28 +65,22 @@ variable "aml_training_subnet_cidr" {
   description = "Address space to use for the Azure Machine Learning training subnet."
 }
 
-variable "private_dns_zones_subscription_id" {
+variable "dns_zones_remote_subscription_id" {
   type        = string
   description = "The id of the subscription where remote Private DNS Zones are deployed."
   default     = null
 }
 
-variable "private_dns_zones_resource_group_name" {
+variable "dns_zones_remote_resource_group" {
   type        = string
   description = "Name of the resource group in the remote subscriptions where remote Private DNS Zones are deployed."
   default     = null
 }
 
-variable "remote_private_dns_zones" {
-  type = map(object({
-    create_vnet_links_to_remote_zones = bool
-    vnet_key                          = string
-    subscription_id                   = string
-    resource_group_name               = string
-    private_dns_zones                 = list(string)
-  }))
+variable "dns_zones_remote_zones" {
+  type        = list(string)
   description = "List of Private DNS Zone names from the remote subscription that will be linked to the Data Landing Zone"
-  default     = {}
+  default     = []
 }
 
 variable "use_existing_shared_runtime_compute" {
