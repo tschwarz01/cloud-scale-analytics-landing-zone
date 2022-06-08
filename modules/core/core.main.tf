@@ -7,6 +7,7 @@ terraform {
   }
 }
 
+
 resource "azurerm_resource_group" "rg" {
   for_each = local.resource_groups
 
@@ -23,8 +24,10 @@ resource "azurerm_network_security_group" "nsg" {
   resource_group_name = azurerm_resource_group.rg[each.value.resource_group_key].name
   location            = each.value.location
   tags                = var.tags
+
   dynamic "security_rule" {
     for_each = try(each.value.nsg, [])
+
     content {
       name                         = try(security_rule.value.name, null)
       priority                     = try(security_rule.value.priority, null)
@@ -114,11 +117,13 @@ resource "azurerm_subnet_network_security_group_association" "nsg_assoc" {
   network_security_group_id = azurerm_network_security_group.nsg[each.value.nsg_key].id
 }
 
+
 resource "azurerm_route_table" "rt-training" {
   name                = "rt-training"
   location            = var.global_settings.location
   resource_group_name = azurerm_resource_group.rg["network"].name
 }
+
 
 resource "azurerm_route" "training-Internet-Route" {
   name                = "Internet"
@@ -128,6 +133,7 @@ resource "azurerm_route" "training-Internet-Route" {
   next_hop_type       = "Internet"
 }
 
+
 resource "azurerm_route" "training-AzureMLRoute" {
   name                = "AzureMLRoute"
   resource_group_name = azurerm_resource_group.rg["network"].name
@@ -135,6 +141,7 @@ resource "azurerm_route" "training-AzureMLRoute" {
   address_prefix      = "AzureMachineLearning"
   next_hop_type       = "Internet"
 }
+
 
 resource "azurerm_route" "training-BatchRoute" {
   name                = "BatchRoute"
@@ -144,19 +151,40 @@ resource "azurerm_route" "training-BatchRoute" {
   next_hop_type       = "Internet"
 }
 
+
 resource "azurerm_subnet_route_table_association" "rt-training-link" {
   subnet_id      = local.subnets["aml_training"].id
   route_table_id = azurerm_route_table.rt-training.id
 }
 
-module "remote_vnet_links" {
-  for_each = local.ddi.remote_private_dns_zones
-  source   = "../../services/networking/private_dns"
 
-  global_settings    = var.global_settings
-  virtual_network_id = try(azurerm_virtual_network.vnet[try(each.key, each.value.vnet_key)].id, null)
-  private_dns_zones  = each.value.private_dns_zones
-  tags               = var.tags
+# module "remote_vnet_links" {
+#   for_each = var.module_settings.private_dns_zones
+#   source   = "../../services/networking/private_dns"
+
+#   global_settings    = var.global_settings
+#   virtual_network_id = try(azurerm_virtual_network.vnet["vnet"].id, null)
+#   private_dns_zones  = each.value.private_dns_zones
+#   tags               = var.tags
+# }
+
+
+resource "azapi_resource" "remote_vnet_links" {
+  for_each  = try(var.module_settings.private_dns_zones, {})
+  type      = "Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01"
+  location  = "global"
+  name      = "${var.global_settings.name}-${each.key}"
+  parent_id = each.value
+
+  body = jsonencode({
+    properties = {
+      registrationEnabled = false
+      virtualNetwork = {
+        id = azurerm_virtual_network.vnet["vnet"].id
+      }
+    }
+  })
+  tags = try(var.tags, {})
 }
 
 
@@ -217,11 +245,12 @@ module "subscription_diagnostics" {
   }
 }
 
+
 module "vnet_diagnostics" {
   source   = "../../services/logmon/diagnostics"
-  for_each = azurerm_virtual_network.vnet
+  for_each = local.networking.vnets
 
-  resource_id = each.value.id
+  resource_id = azurerm_virtual_network.vnet[each.key].id
   diagnostics = local.combined_diagnostics
-  profiles    = local.networking.vnets[each.key].diagnostic_profiles
+  profiles    = each.value.diagnostic_profiles
 }

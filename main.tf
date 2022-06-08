@@ -141,4 +141,3 @@ output "datalake_services" {
   value     = module.datalake_services
   sensitive = true
 }
-
