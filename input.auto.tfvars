@@ -19,14 +19,21 @@ remote_state_storage_account_name = "stgcafcsaterraformstate"
 remote_state_container_name       = "caf-csa-management-zone"
 remote_state_tfstate_key          = "dmlz.terraform.tfstate"
 
+
 #########################################
 ##    Landing Zone Feature Flags
 #########################################
-deploy_shared_synapse_workspace  = false
+// Azure Synapse
+deploy_shared_synapse_workspace  = true
 deploy_shared_synapse_sql_pool   = false
 deploy_shared_synapse_spark_pool = false
 
-deploy_shared_databricks_workspace = false
+// Databricks
+deploy_shared_databricks_workspace = true
+
+// Azure Data Factory
+use_existing_shared_runtime_compute           = true
+create_shared_runtime_compute_in_landing_zone = false
 
 
 #########################################
@@ -61,9 +68,6 @@ dns_zones_remote_zones           = null #["privatelink.blob.core.windows.net","p
 #########################################
 ##   Shared Integration Module Settings
 #########################################
-use_existing_shared_runtime_compute           = true
-create_shared_runtime_compute_in_landing_zone = false
-
 # Resource id of the Data Factory hosted in the external (management zone) subscription.
 # Leave null if using remote state data source
 remote_data_factory_resource_id = null
