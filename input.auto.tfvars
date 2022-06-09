@@ -10,6 +10,16 @@ tags = {
 
 
 #########################################
+##       Data Management Zone
+##      Remote State Settings
+#########################################
+remote_state_subscription_id      = "47f7e6d7-0e52-4394-92cb-5f106bbc647f"
+remote_state_resource_group_name  = "rg-data-management-zone-terraform"
+remote_state_storage_account_name = "stgcafcsaterraformstate"
+remote_state_container_name       = "caf-csa-management-zone"
+remote_state_tfstate_key          = "dmlz.terraform.tfstate"
+
+#########################################
 ##    Landing Zone Feature Flags
 #########################################
 deploy_shared_synapse_workspace  = false

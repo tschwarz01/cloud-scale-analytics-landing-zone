@@ -2,6 +2,36 @@ variable "global_settings" {
   default = {}
 }
 
+variable "remote_state_subscription_id" {
+  description = "The Azure subscription ID for the subscription where the Terraform state file for the Data Management Landing Zone is stored."
+  type        = string
+  default     = null
+}
+
+variable "remote_state_resource_group_name" {
+  description = "The Azure resource group where the Terraform state file for the Data Management Landing Zone is stored."
+  type        = string
+  default     = null
+}
+
+variable "remote_state_storage_account_name" {
+  description = "The Azure storage account where the Terraform state file for the Data Management Landing Zone is stored."
+  type        = string
+  default     = null
+}
+
+variable "remote_state_container_name" {
+  description = "The storage account container where the Terraform state file for the Data Management Landing Zone is stored."
+  type        = string
+  default     = null
+}
+
+variable "remote_state_tfstate_key" {
+  description = "The terraform state key (state file filename) of the Data Management Landing Zone's state file."
+  type        = string
+  default     = null
+}
+
 variable "location" {
   description = "The location of the resource group"
   type        = string
