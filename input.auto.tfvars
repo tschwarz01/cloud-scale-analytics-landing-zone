@@ -25,15 +25,15 @@ remote_state_tfstate_key          = "dmlz.terraform.tfstate"
 #########################################
 // Azure Synapse
 deploy_shared_synapse_workspace  = true
-deploy_shared_synapse_sql_pool   = false
-deploy_shared_synapse_spark_pool = false
+deploy_shared_synapse_sql_pool   = true
+deploy_shared_synapse_spark_pool = true
 
 // Databricks
 deploy_shared_databricks_workspace = true
 
 // Azure Data Factory
 use_existing_shared_runtime_compute           = true
-create_shared_runtime_compute_in_landing_zone = false
+create_shared_runtime_compute_in_landing_zone = true
 
 
 #########################################

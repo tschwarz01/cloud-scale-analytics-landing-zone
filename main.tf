@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "azurerm" {
-    subscription_id      = "47f7e6d7-0e52-4394-92cb-5f106bbc647f"
-    resource_group_name  = "rg-data-management-zone-terraform"
-    storage_account_name = "stgcafcsaterraformstate"
+    subscription_id      = "893395a4-65a3-4525-99ea-2378c6e0dbed"
+    resource_group_name  = "rg-data-landing-zone-terraform"
+    storage_account_name = "stgcafcsatfstate"
     container_name       = "caf-csa-landing-zone"
     key                  = "dlz.terraform.tfstate"
   }
