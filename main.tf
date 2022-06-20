@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "3.7.0"
+      version = "3.10.0"
     }
   }
 
@@ -142,15 +142,5 @@ module "shared_synapse" {
   module_settings       = local.synapse_module_settings
   combined_objects_core = local.combined_objects_core
   tags                  = local.global_settings.tags
-}
-
-
-output "combined_objects_core" {
-  value = local.combined_objects_core
-}
-
-output "datalake_services" {
-  value     = module.datalake_services
-  sensitive = true
 }
 

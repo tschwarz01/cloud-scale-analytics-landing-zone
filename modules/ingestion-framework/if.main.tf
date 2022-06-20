@@ -113,7 +113,11 @@ module "data_factory" {
 
 
 resource "azurerm_role_assignment" "shared_factory_assignment" {
-  for_each = var.self_hosted_integration_runtimes
+  #for_each = var.self_hosted_integration_runtimes
+  for_each = {
+    for key, value in var.self_hosted_integration_runtimes : key => value
+    if value.remote_data_factory_self_hosted_runtime_resource_id != null
+  }
 
   scope                = each.value.remote_data_factory_resource_id
   role_definition_name = "Contributor"

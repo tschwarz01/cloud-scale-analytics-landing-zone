@@ -147,8 +147,8 @@ resource "azurerm_synapse_workspace" "ws" {
 
 
 resource "azurerm_synapse_sql_pool" "sql_pool" {
-  #for_each             = local.synapse_sql_pools
-  for_each = { for k, v in local.synapse_sql_pools : k => v if var.module_settings.feature_flags.create_sql_pool == true }
+  depends_on = [azurerm_synapse_workspace.ws]
+  for_each   = { for k, v in local.synapse_sql_pools : k => v if var.module_settings.feature_flags.create_sql_pool == true }
 
   name                 = try(each.value.name, "sharedsynpool")
   synapse_workspace_id = azurerm_synapse_workspace.ws[each.value.synapse_workspace_key].id
@@ -171,8 +171,8 @@ resource "azurerm_synapse_sql_pool" "sql_pool" {
 
 
 resource "azurerm_synapse_spark_pool" "spark_pool" {
-  #for_each = local.synapse_spark_pools
-  for_each = { for k, v in local.synapse_spark_pools : k => v if var.module_settings.feature_flags.create_spark_pool == true }
+  depends_on = [azurerm_synapse_workspace.ws]
+  for_each   = { for k, v in local.synapse_spark_pools : k => v if var.module_settings.feature_flags.create_spark_pool == true }
 
   name                                = "${var.global_settings.prefix}${each.value.name}"
   synapse_workspace_id                = azurerm_synapse_workspace.ws[each.value.synapse_workspace_key].id
