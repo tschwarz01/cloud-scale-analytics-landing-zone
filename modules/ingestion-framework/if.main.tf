@@ -1,6 +1,6 @@
 
 resource "random_password" "sql_admin" {
-  count = try(local.mssql_servers["ingestion_sqls"].administrator_login_password, null) == null ? 1 : 0
+  count = lookup(local.mssql_servers["ingestion_sqls"], "administrator_login_password", null) == null ? 1 : 0
 
   length           = 128
   special          = true
@@ -11,7 +11,7 @@ resource "random_password" "sql_admin" {
 
 
 resource "azurerm_key_vault_secret" "sql_admin_password" {
-  count = try(local.mssql_servers["ingestion_sqls"].administrator_login_password, null) == null ? 1 : 0
+  count = lookup(local.mssql_servers["ingestion_sqls"], "administrator_login_password", null) == null ? 1 : 0
 
   name         = "ingestion-sql-admin-password"
   value        = random_password.sql_admin.0.result
@@ -46,7 +46,7 @@ resource "azurerm_mssql_server" "sqls" {
   location                     = var.global_settings.location
   version                      = "12.0"
   administrator_login          = each.value.administrator_login
-  administrator_login_password = try(each.value.administrator_login_password, azurerm_key_vault_secret.sql_admin_password.0.value)
+  administrator_login_password = coalesce(lookup(each.value, "administrator_login_password", null), azurerm_key_vault_secret.sql_admin_password.0.value)
   minimum_tls_version          = "1.2"
 
   azuread_administrator {
@@ -65,10 +65,10 @@ resource "azurerm_mssql_database" "mssqldb" {
 
   name         = "${var.global_settings.name}-${each.value.name}"
   server_id    = azurerm_mssql_server.sqls[each.value.mssql_server_key].id
-  license_type = try(each.value.license_type, null)
-  max_size_gb  = try(each.value.max_size_gb, null)
-  sku_name     = try(each.value.sku_name, null)
-  tags         = try(var.tags, {})
+  license_type = lookup(each.value, "license_type", null)
+  max_size_gb  = lookup(each.value, "max_size_gb", null)
+  sku_name     = lookup(each.value, "sku_name", null)
+  tags         = var.tags
 }
 
 
@@ -76,12 +76,12 @@ module "private_endpoints" {
   source   = "../../services/networking/private_endpoint"
   for_each = local.private_endpoints
 
-  location                   = try(each.value.location, var.global_settings.location, null)
-  resource_group_name        = try(each.value.resource_group_name, var.combined_objects_core.resource_groups[try(each.value.resource_group.key, each.value.resource_group_key)].name)
+  location                   = coalesce(each.value.location, var.global_settings.location)
+  resource_group_name        = var.combined_objects_core.resource_groups[each.value.resource_group_key].name
   resource_id                = each.value.resource_id
   name                       = "${var.global_settings.name_clean}${each.value.name}"
   private_service_connection = each.value.private_service_connection
-  subnet_id                  = try(each.value.subnet_id, var.combined_objects_core.virtual_subnets[each.value.subnet_key].id)
+  subnet_id                  = lookup(each.value, "subnet_id", var.combined_objects_core.virtual_subnets[each.value.subnet_key].id)
   private_dns                = each.value.private_dns
   private_dns_zones          = var.combined_objects_core.private_dns_zones
   tags                       = var.global_settings.tags
@@ -106,7 +106,7 @@ module "data_factory" {
   global_settings       = var.global_settings
   settings              = each.value
   location              = var.global_settings.location
-  resource_group_name   = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : var.combined_objects_core.resource_groups[try(each.value.resource_group_key, each.value.resource_group.key)].name
+  resource_group_name   = var.combined_objects_core.resource_groups[each.value.resource_group_key].name
   tags                  = var.tags
   combined_objects_core = var.combined_objects_core
 }
@@ -140,7 +140,7 @@ module "shared_integration_runtimes" {
   }
 
   name        = "ingestion-${each.value.name}"
-  description = try(each.value.description)
+  description = lookup(each.value, "description", null)
   #data_factories  = var.data_factories
   data_factory_id = module.data_factory["ingestion"].id
   id              = each.value.remote_data_factory_self_hosted_runtime_resource_id
