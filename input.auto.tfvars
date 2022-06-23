@@ -13,11 +13,11 @@ tags = {
 ##       Data Management Zone
 ##      Remote State Settings
 #########################################
-remote_state_subscription_id      = "47f7e6d7-0e52-4394-92cb-5f106bbc647f"
-remote_state_resource_group_name  = "rg-data-management-zone-terraform"
-remote_state_storage_account_name = "stgcafcsaterraformstate"
-remote_state_container_name       = "caf-csa-management-zone"
-remote_state_tfstate_key          = "dmlz.terraform.tfstate"
+# remote_state_subscription_id      = "00000000-0000-0000-0000-000000000000"
+# remote_state_resource_group_name  = "resource-group-name"
+# remote_state_storage_account_name = "storage-account-name"
+# remote_state_container_name       = "storage-account-container-name"
+# remote_state_tfstate_key          = "tf-state-file-name"
 
 
 #########################################

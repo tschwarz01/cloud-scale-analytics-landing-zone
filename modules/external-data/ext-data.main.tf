@@ -11,7 +11,7 @@ resource "azurerm_storage_account" "stg" {
   min_tls_version                 = "TLS1_2"
   allow_nested_items_to_be_public = false
   is_hns_enabled                  = false
-  tags                            = try(var.tags, {})
+  tags                            = var.tags
 }
 
 resource "azurerm_storage_container" "container" {
@@ -25,7 +25,7 @@ module "private_endpoints" {
   source   = "../../services/networking/private_endpoint"
   for_each = local.private_endpoints
 
-  location                   = try(each.value.location, var.global_settings.location, null)
+  location                   = coalesce(each.value.location, var.global_settings.location)
   resource_group_name        = var.combined_objects_core.resource_groups[each.value.resource_group_key].name
   resource_id                = azurerm_storage_account.stg[each.value.storage_key].id
   name                       = "${var.global_settings.name_clean}${each.value.name}"

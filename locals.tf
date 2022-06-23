@@ -1,5 +1,6 @@
 resource "random_string" "prefix" {
-  count   = try(var.global_settings.prefix, null) == null ? 1 : 0
+  count = lookup(var.global_settings, "prefix", null) == null ? 1 : 0
+
   length  = 4
   special = false
   upper   = false
@@ -45,8 +46,8 @@ locals {
     private_endpoint_subnet_cidr                = var.private_endpoint_subnet_cidr
     shared_databricks_pub_subnet_cidr           = var.shared_databricks_pub_subnet_cidr
     shared_databricks_pri_subnet_cidr           = var.shared_databricks_pri_subnet_cidr
-    aml_training_subnet_cidr                    = try(var.aml_training_subnet_cidr, null)
-    private_dns_zones                           = local.dmlz_config.private_dns_zones #local.dmlz_config.private_dns_zones #var.remote_private_dns_zones
+    aml_training_subnet_cidr                    = var.aml_training_subnet_cidr
+    private_dns_zones                           = local.dmlz_config.private_dns_zones
   }
 
 
@@ -66,11 +67,11 @@ locals {
 
 
   integration_module_settings = {
-    use_existing_shared_runtime_compute                   = try(local.dmlz_config.shir_compute_deployed_to_dmlz, false) == false ? false : try(var.use_existing_shared_runtime_compute, false)
+    use_existing_shared_runtime_compute                   = lookup(local.dmlz_config, "shir_compute_deployed_to_dmlz") == false ? false : var.use_existing_shared_runtime_compute
     remote_data_factory_resource_id                       = local.dmlz_config.dmlz_factory_id
     remote_data_factory_self_hosted_runtime_resource_id   = local.dmlz_config.dmlz_shir_id
-    create_shared_runtime_compute_in_landing_zone         = try(var.create_shared_runtime_compute_in_landing_zone, false)
-    data_factory_self_hosted_runtime_authorization_script = try(var.data_factory_self_hosted_runtime_authorization_script, null)
+    create_shared_runtime_compute_in_landing_zone         = var.create_shared_runtime_compute_in_landing_zone
+    data_factory_self_hosted_runtime_authorization_script = var.data_factory_self_hosted_runtime_authorization_script
     vmss_vm_sku                                           = var.vmss_vm_sku
     vmss_instance_count                                   = var.vmss_instance_count
   }
@@ -125,21 +126,16 @@ locals {
   dmlz_input = data.terraform_remote_state.dmlz.outputs.dlz_params
 
   dmlz_config = {
-    hub_vnet_id                   = try(var.connectivity_hub_virtual_network_id, null) == null ? try(local.dmlz_input.connectivity_hub_vnet_id, null) : var.connectivity_hub_virtual_network_id
-    dmlz_subscription_id          = try(var.data_management_zone_virtual_network_id, null) == null ? try(element(split("/", local.dmlz_input.mgmt_zone_vnet_id), 2), null) : element(split("/", var.data_management_zone_virtual_network_id), 2)
-    dmlz_vnet_id                  = try(var.data_management_zone_virtual_network_id, null) == null ? try(local.dmlz_input.mgmt_zone_vnet_id, null) : var.data_management_zone_virtual_network_id
-    dmlz_vnet_cidr                = try(local.dmlz_input.mgmt_zone_vnet_cidr, [])
-    central_law_id                = try(var.remote_log_analytics_workspace_workspace_id, null) == null ? try(local.dmlz_input.log_analytics_workspace_workspace_id, null) : var.remote_log_analytics_workspace_workspace_id
-    central_law_resource_id       = try(var.remote_log_analytics_workspace_resource_id, null) == null ? try(local.dmlz_input.log_analytics_workspace_resource_id, null) : var.remote_log_analytics_workspace_resource_id
-    shir_compute_deployed_to_dmlz = try(local.dmlz_input.deploy_dmlz_shared_integration_runtime, null)
-    dmlz_factory_id               = try(var.remote_data_factory_resource_id, null) == null ? try(local.dmlz_input.mgmt_zone_factory_id, null) : var.remote_data_factory_resource_id
-    dmlz_shir_id                  = try(var.remote_data_factory_self_hosted_runtime_resource_id, null) == null ? try(local.dmlz_input.mgmt_zone_shir_id, null) : var.remote_data_factory_self_hosted_runtime_resource_id
-    private_dns_zones             = try(var.dns_zones_remote_zones, null) == null ? try(local.dmlz_input.private_dns_zones, null) : local.remote_private_dns_zones
-    #private_dns_zones             = try(local.remote_private_dns_zones, local.dmlz_input.private_dns_zones)
+    hub_vnet_id                   = var.connectivity_hub_virtual_network_id == null ? lookup(local.dmlz_input, "connectivity_hub_vnet_id", null) : var.connectivity_hub_virtual_network_id
+    dmlz_subscription_id          = var.data_management_zone_virtual_network_id == null ? element(split("/", lookup(local.dmlz_input, "mgmt_zone_vnet_id")), 2) : element(split("/", var.data_management_zone_virtual_network_id), 2)
+    dmlz_vnet_id                  = var.data_management_zone_virtual_network_id == null ? lookup(local.dmlz_input, "mgmt_zone_vnet_id", null) : var.data_management_zone_virtual_network_id
+    dmlz_vnet_cidr                = lookup(local.dmlz_input, "mgmt_zone_vnet_cidr", [])
+    central_law_id                = var.remote_log_analytics_workspace_workspace_id == null ? lookup(local.dmlz_input, "log_analytics_workspace_workspace_id", null) : var.remote_log_analytics_workspace_workspace_id
+    central_law_resource_id       = var.remote_log_analytics_workspace_resource_id == null ? lookup(local.dmlz_input, "log_analytics_workspace_resource_id", null) : var.remote_log_analytics_workspace_resource_id
+    shir_compute_deployed_to_dmlz = lookup(local.dmlz_input, "deploy_dmlz_shared_integration_runtime")
+    dmlz_factory_id               = var.remote_data_factory_resource_id == null ? lookup(local.dmlz_input, "mgmt_zone_factory_id", null) : var.remote_data_factory_resource_id
+    dmlz_shir_id                  = var.remote_data_factory_self_hosted_runtime_resource_id == null ? lookup(local.dmlz_input, "mgmt_zone_shir_id", null) : var.remote_data_factory_self_hosted_runtime_resource_id
+    private_dns_zones             = var.dns_zones_remote_zones == null ? lookup(local.dmlz_input, "private_dns_zones", null) : local.remote_private_dns_zones
   }
-
-
-
-
-
 }
+

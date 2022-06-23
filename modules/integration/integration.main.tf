@@ -1,13 +1,13 @@
 
 module "keyvault" {
   source   = "../../services/general/keyvault/keyvault"
-  for_each = try(var.module_settings.create_shared_runtime_compute_in_landing_zone, false) == true ? try(local.keyvaults, {}) : {}
+  for_each = lookup(var.module_settings, "create_shared_runtime_compute_in_landing_zone", false) == true ? local.keyvaults : {}
 
   name                  = "${var.global_settings.name}-${each.value.name}"
   global_settings       = var.global_settings
   settings              = each.value
   location              = var.global_settings.location
-  resource_group_name   = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : var.combined_objects_core.resource_groups[try(each.value.resource_group_key, each.value.resource_group.key)].name
+  resource_group_name   = var.combined_objects_core.resource_groups[each.value.resource_group_key].name
   tags                  = var.tags
   combined_objects_core = var.combined_objects_core
 }
@@ -21,7 +21,7 @@ module "data_factory" {
   global_settings       = var.global_settings
   settings              = each.value
   location              = var.global_settings.location
-  resource_group_name   = can(each.value.resource_group.name) || can(each.value.resource_group_name) ? try(each.value.resource_group.name, each.value.resource_group_name) : var.combined_objects_core.resource_groups[try(each.value.resource_group_key, each.value.resource_group.key)].name
+  resource_group_name   = var.combined_objects_core.resource_groups[each.value.resource_group_key].name
   tags                  = var.tags
   combined_objects_core = var.combined_objects_core
 }
@@ -35,7 +35,7 @@ module "remote_self_hosted_runtimes" {
   }
 
   name        = each.value.name
-  description = try(each.value.description, null)
+  description = lookup(each.value, "description", null)
   #data_factories  = module.data_factory
   data_factory_id = module.data_factory[each.value.data_factory_key].id
   settings        = each.value
@@ -49,7 +49,7 @@ module "local_self_hosted_runtimes" {
   }
 
   name        = each.value.name
-  description = try(each.value.description, null)
+  description = lookup(each.value, "description", null)
   #data_factories  = module.data_factory
   data_factory_id = module.data_factory[each.value.data_factory_key].id
   settings        = each.value
@@ -89,7 +89,7 @@ resource "time_sleep" "shirdelay" {
 module "vmss_self_hosted_integration_runtime" {
   depends_on = [time_sleep.shirdelay]
   source     = "../../services/general/data_factory/vmss_shir"
-  for_each   = try(var.module_settings.create_shared_runtime_compute_in_landing_zone, false) == true ? try(local.vmss_self_hosted_integration_runtimes, {}) : {}
+  for_each   = lookup(var.module_settings, "create_shared_runtime_compute_in_landing_zone", false) == true ? local.vmss_self_hosted_integration_runtimes : {}
 
   global_settings        = var.global_settings
   resource_group_name    = var.combined_objects_core.resource_groups[each.value.resource_group_key].name

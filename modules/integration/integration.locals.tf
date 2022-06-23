@@ -43,7 +43,7 @@ locals {
   data_factory = {
     df_shared = {
       name                            = "lz-adf-shared"
-      resource_group_name             = var.combined_objects_core.resource_groups["integration"].name
+      resource_group_key              = "integration"
       managed_virtual_network_enabled = true
       enable_system_msi               = true
 
@@ -94,7 +94,7 @@ locals {
 
   role_assignments = {
     kvint = {
-      scope                = try(module.keyvault["integration"].id, null)
+      scope                = module.keyvault["integration"].id
       role_definition_name = "Key Vault Secrets Officer"
       principal_id         = var.global_settings.client_config.object_id
     }
