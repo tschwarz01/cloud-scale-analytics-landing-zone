@@ -25,7 +25,7 @@ locals {
   }
 
   filesystems = {
-    shared_synaspe = {
+    shared_synapse = {
       name        = "sharedsynapse"
       storage_key = "workspace"
     }
